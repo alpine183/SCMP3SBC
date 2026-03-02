@@ -1,0 +1,67 @@
+Name		DECSCMP3;
+Partno		KF010001;
+Date		23/08/16;
+Revision	02;
+Designer	efialtes_htn;
+Company		EFIALTES_HTN Design;
+Assembly	System 19-5-SC/MP III;
+Location	U06;
+Device		G16V8;
+
+/* *************************************************************** */
+/* System 1Q IO decorder Glue logic				   */
+/*  								   */
+/* *************************************************************** */
+/* target device	GAL18V8 any speed rank is OK		   */
+/* *************************************************************** */
+/* Memory Map                                                      */
+/*  0x0000-0x3fff	ROM (NIBL and extension)		   */
+/*  0x4000-0xadff	RAM 					   */
+/*  0xfc00-0xfc3f	Serial Interface			   */
+/*  0xfc40-0xfcff	I/O area				   */
+/*  0xfd00-0xfdff	reserved				   */
+/*  0xfe00-0xffff	RAM (ffc0-ffff internal)		   */
+/* *************************************************************** */
+/** inputs	**/
+Pin 1	=	!NRDS;
+Pin 2	=	!NWDS;
+Pin 3   =	A15;
+Pin 4   =	A14;
+Pin 5  =	A13;
+Pin 6	=	A12;
+Pin 7	=	A11;
+Pin 8	=	A10;
+Pin 9	=	A9;
+Pin 11	=	A8;
+Pin 18	=	A7;
+Pin 16	=	A6;
+
+/** outputs	**/
+Pin 14	=	!ROMEN;
+Pin 15	=	!RAMDEC; 
+Pin 19	=	!WR; 
+Pin 17	=	!RD; 
+Pin 12	=	!RAMEN;
+Pin 13	=	!SEREN;
+
+/* logic equations	*/
+ROMEN	= (NRDS & !A15 & !A14);
+RAMDEC	= ((!A15 & A14) 
+		# (A15 & !A14 & !A13)
+		# (A15 & !A14 & !A12)
+		# (A15 & !A14 & !A11)
+		# (A15 & !A14 & !A10)
+		# (A15 & !A14 & !A9)
+		# (A15 &  A14 &  A13 &  A12 &  A11 &  A10 &  A9));
+RD	= NRDS;
+WR	= NWDS;
+SEREN	= A15 & A14 & A13 & A12 & A11 & A10 & !A9 & !A8 & !A7 & !A6;
+RAMEN	= RAMDEC & (NRDS # NWDS);
+
+ROMEN.oe = 'b'1;
+RAMEN.oe = 'b'1;
+RD.oe = 'b'1;
+WR.oe = 'b'1;
+SEREN.oe = 'b'1;
+RAMDEC.oe = 'b'1;
+
